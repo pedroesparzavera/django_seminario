@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <h2 class="text-center my-4 fw-bold">Listado de Inscritos</h2>
+
+  <!-- Formulario para eliminar registros seleccionados -->
+  <form method="POST" action="{% url 'inscrito_bulk_delete' %}" id="delete-form">
+    {% csrf_token %}
+
+    <!-- Botón de Eliminar en la parte superior -->
+    <div class="text-start mb-2">
+      <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+        <i class="fas fa-trash-alt"></i> Eliminar Seleccionados
+      </button>
+    </div>
+
+    <!-- Tabla de Inscritos -->
+    <div class="table-responsive">
+      <table class="table table-striped table-hover table-bordered text-center">
+        <thead class="table-dark">
+          <tr>
+            <th><input type="checkbox" id="select-all"></th>
+            <th>ID</th>
+            <th>Institución</th>
+            <th>Persona que Inscribe</th>
+            <th>Nro Personas</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Estado</th>
+            <th>Fecha de Inscripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for inscrito in inscritos %}
+          <tr>
+            <td><input type="checkbox" name="seleccionados" value="{{ inscrito.id }}"></td>
+            <td>{{ inscrito.id }}</td>
+            <td>{{ inscrito.nombre_institucion }}</td>
+            <td>{{ inscrito.persona_que_inscribe }}</td>
+            <td>{{ inscrito.numero_personas }}</td>
+            <td>{{ inscrito.telefono }}</td>
+            <td>{{ inscrito.correo }}</td>
+            <td>{{ inscrito.estado }}</td>
+            <td>{{ inscrito.fecha_inscripcion }}</td>
+            <td>
+              <a href="{% url 'inscrito_update' inscrito.pk %}" class="btn btn-warning btn-sm">Editar</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="10">No hay registros disponibles.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Botón de Eliminar en la parte inferior -->
+    <div class="text-start mt-2">
+      <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+        <i class="fas fa-trash-alt"></i> Eliminar Seleccionados
+      </button>
+    </div>
+  </form>
+
+  <!-- Controles de Paginación -->
+  <nav>
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page=1&order_by={{ request.GET.order_by }}">Primera</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}&order_by={{ request.GET.order_by }}">Anterior</a>
+        </li>
+      {% endif %}
+
+      <li class="page-item disabled">
+        <span class="page-link">
+          Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+      </li>
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}&order_by={{ request.GET.order_by }}">Siguiente</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&order_by={{ request.GET.order_by }}">Última</a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  <!-- Script para Confirmación -->
+  <script>
+    // Seleccionar todos los checkboxes
+    document.getElementById('select-all').addEventListener('click', function () {
+      let checkboxes = document.getElementsByName('seleccionados');
+      for (let checkbox of checkboxes) {
+        checkbox.checked = this.checked;
+      }
+    });
+
+    // Confirmación antes de eliminar
+    function confirmDelete() {
+      let checkboxes = document.querySelectorAll('input[name="seleccionados"]:checked');
+      if (checkboxes.length === 0) {
+        alert("No has seleccionado ningún registro para eliminar.");
+        return;
+      }
+
+      let confirmAction = confirm("¿Estás seguro de que deseas eliminar los registros seleccionados?");
+      if (confirmAction) {
+        document.getElementById('delete-form').submit();
+      }
+    }
+  </script>
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+{% endblock %}

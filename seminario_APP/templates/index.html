@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <!-- Hero Section -->
+  <div class="container-fluid p-5 bg-dark text-light text-center">
+    <h1 class="display-4 fw-bold" style="font-family: Arial, sans-serif;">
+      Sistema de Inscripción
+    </h1>
+    <h2 class="fw-light" style="font-family: Arial, sans-serif;">
+      Seminario Gastronómico
+    </h2>
+    <p class="lead mt-3">Administra fácilmente las inscripciones de los participantes al seminario.</p>
+  </div>
+
+  <!-- Contenido Principal con Tarjetas clicables -->
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <!-- Tarjeta para Listar Inscritos -->
+      <div class="col-md-4 mb-4">
+        <a href="{% url 'inscrito_list' %}" class="text-decoration-none">
+          <div class="card shadow-lg text-center h-100">
+            <div class="card-body">
+              <i class="fas fa-list-ul fa-3x mb-3 text-primary"></i>
+              <h5 class="card-title fw-bold text-dark">Listar Participantes</h5>
+              <p class="card-text text-muted">Visualiza y administra la lista de participantes inscritos en el seminario.</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Tarjeta para Agregar Inscrito -->
+      <div class="col-md-4 mb-4">
+        <a href="{% url 'inscrito_create' %}" class="text-decoration-none">
+          <div class="card shadow-lg text-center h-100">
+            <div class="card-body">
+              <i class="fas fa-user-plus fa-3x mb-3 text-success"></i>
+              <h5 class="card-title fw-bold text-dark">Agregar Participante</h5>
+              <p class="card-text text-muted">Registra nuevos participantes fácilmente usando el formulario.</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Importar Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+{% endblock %}
