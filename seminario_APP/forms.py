@@ -1,8 +1,14 @@
 from django import forms
-from .models import Inscrito
+from .models import Inscrito, Institucion
 import re  # Para las expresiones regulares
 
 class InscritoForm(forms.ModelForm):
+    nueva_institucion = forms.CharField(
+        required=False,
+        label="Nueva Institución",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: INACAP'}),
+    )
+
     class Meta:
         model = Inscrito
         fields = '__all__'
@@ -32,7 +38,22 @@ class InscritoForm(forms.ModelForm):
 
     def clean_persona_que_inscribe(self):
         persona = self.cleaned_data.get('persona_que_inscribe')
-        # Expresión regular que permite solo letras y espacios
         if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$', persona):
             raise forms.ValidationError("El nombre debe contener solo letras y espacios.")
         return persona
+
+    def save(self, commit=True):
+        # Crear una institución si el campo nueva_institucion tiene valor
+        nueva_institucion = self.cleaned_data.get('nueva_institucion')
+        if nueva_institucion:
+            institucion, created = Institucion.objects.get_or_create(nombre=nueva_institucion)
+            self.instance.nombre_institucion = institucion
+        return super().save(commit=commit)
+    
+class InstitucionForm(forms.ModelForm):
+    class Meta:
+        model = Institucion
+        fields = ['nombre']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de la institución'}),
+        }
